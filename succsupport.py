@@ -99,7 +99,6 @@ class MyGUI:
         #opens or creates a new file
         file = open("waterDate.txt", "r")
         #if there is not a previous water date, waters and records date
-        self.updateWaterVolume()
         if len(str(file.read())) < 5:
             file.close()
             self.water()
@@ -129,15 +128,20 @@ class MyGUI:
         
         #sets water volume slider to file
         file = open("waterVolume.txt", "r")
-        if(len(file.read()) > 0):
+        file.seek(0,0)
+        self.wvo = file.read()
+        print "water volume file: " + self.wvo
+        if(len(self.wvo) > 0):
             print "water volume loaded"
-            if(int(file.read() > 0 and int(file.read() <= 400))):
-                self.waterVolume = int(file.read())
+            if(int(self.wvo) >= 0 and int(self.wvo) < 401):
+                self.waterVolume = int(self.wvo)
+                print "WATER VOLUME WAS SET BABY " + self.wvo
             else:
-                "no water volume detected, set to 200"
+                print self.wvo + " water volume value extraneous, set to 200"
                 self.waterVolume = 200
                 self.updateWaterVolumeFile()
         else:
+            print "not volume found, set to 200"
             self.waterVolume = 200
             self.updateWaterVolumeFile()
             
@@ -155,10 +159,12 @@ class MyGUI:
 
         #sets timedelta based off of schedule file
         file = open("waterSchedule.txt", 'r')
-        print "schedule file: " + file.read()
-        if(len(file.read()) >= 1):
-            self.daysDelta = int(file.read())
+        self.scheduleFileOutput = file.read()
+        print "schedule file: " + self.scheduleFileOutput
+        if(len(self.scheduleFileOutput) >= 1):
+            self.daysDelta = int(self.scheduleFileOutput)
         else:
+            print "no schedule file, set to 7"
             self.daysDelta = 7
         file.close()
 
@@ -212,6 +218,7 @@ class MyGUI:
         
     def updateWaterVolumeFile(self):
         file = open("waterVolume.txt", "w")
+        print "writing volume to file: " + str(self.waterVolume)
         file.write(str(self.waterVolume))
         file.close()
         
